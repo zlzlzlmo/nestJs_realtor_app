@@ -23,3 +23,11 @@ export class SignupDto {
   @MinLength(5, { message: '최소 5자리 입력해야합니다.' })
   password: string;
 }
+
+export class SigninDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  password: string;
+}

@@ -19,7 +19,10 @@ interface SigninParams {
 @Injectable()
 export class AuthService {
   constructor(private readonly prismaService: PrismaService) {}
-  async signup({ email, password, name, phone }: SignupParams) {
+  async signup(
+    { email, password, name, phone }: SignupParams,
+    userType: UserType,
+  ) {
     // 유니크한지 체크하려면
     // 스키마에 @unique 가 들어가있어야함
 
@@ -40,7 +43,7 @@ export class AuthService {
         name,
         phone,
         password: hashedPassword,
-        user_type: UserType.BUYER,
+        user_type: userType,
       },
     });
 
@@ -82,5 +85,11 @@ export class AuthService {
     );
 
     return token;
+  }
+
+  generateProductKey(email: string, userType: UserType) {
+    const string = `${email}-${userType}-${process.env.PRODUCT_KEY_SECRET}`;
+
+    return bcrypt.hash(string, 10);
   }
 }

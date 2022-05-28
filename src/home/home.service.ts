@@ -127,4 +127,23 @@ export class HomeService {
       data: body,
     });
   }
+
+  async deleteHomeById(id: number) {
+    await this.prismaService.image.deleteMany({
+      where: {
+        home_id: id,
+      },
+    });
+    const home = this.prismaService.home.delete({
+      where: {
+        id,
+      },
+    });
+
+    if (!home) {
+      throw new NotFoundException();
+    }
+
+    return { message: '삭제완료' };
+  }
 }

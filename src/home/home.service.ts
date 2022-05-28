@@ -27,6 +27,18 @@ interface CreateHomeParam {
     url: string;
   }[];
 }
+
+interface UpdateHomeParam {
+  address?: string;
+  numberOfBedrooms?: number;
+  numberOfBathrooms?: number;
+  landSize?: number;
+  city?: string;
+
+  price?: number;
+
+  propertyType?: PropertyType;
+}
 @Injectable()
 export class HomeService {
   constructor(private readonly prismaService: PrismaService) {}
@@ -95,5 +107,24 @@ export class HomeService {
     });
 
     await this.prismaService.image.createMany({ data: homeImages });
+  }
+
+  async updateHomeById(id: number, body: UpdateHomeParam) {
+    const home = this.prismaService.home.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!home) {
+      throw new NotFoundException();
+    }
+
+    await this.prismaService.home.update({
+      where: {
+        id,
+      },
+      data: body,
+    });
   }
 }

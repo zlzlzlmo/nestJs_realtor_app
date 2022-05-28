@@ -1,4 +1,4 @@
-import { Image, PropertyType } from '@prisma/client';
+import { PropertyType } from '@prisma/client';
 import { Exclude, Expose, Type } from 'class-transformer';
 import {
   IsArray,
@@ -83,30 +83,28 @@ export class HomeResponseDto {
   }
 }
 
-class CreateHomeDto {
+class Image {
+  @IsString()
+  @IsNotEmpty()
+  url: string;
+}
+
+export class CreateHomeDto {
   @IsString()
   @IsNotEmpty()
   address: string;
 
   @IsNumber()
   @IsPositive()
-  @Expose({ name: 'numberOfBedrooms' })
-  numberOfBedrooms(): number {
-    return this.number_of_bedrooms;
-  }
+  numberOfBedrooms: number;
 
   @IsNumber()
   @IsPositive()
-  @Expose({ name: 'landSize' })
-  landSize() {
-    return this.land_size;
-  }
+  numberOfBathrooms: number;
 
-  @Exclude()
-  number_of_bedrooms: number;
-
-  @Exclude()
-  land_size: number;
+  @IsNumber()
+  @IsPositive()
+  landSize: number;
 
   @IsString()
   @IsNotEmpty()

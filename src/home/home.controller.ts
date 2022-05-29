@@ -9,8 +9,11 @@ import {
   Put,
   Query,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
-import { PropertyType } from '@prisma/client';
+import { PropertyType, UserType } from '@prisma/client';
+import { Roles } from 'src/decorators/roles.decorator';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { User, UserInfo } from '../user/decorator/user.decorator';
 import { CreateHomeDto, HomeResponseDto, UpdateHomeDto } from './dto/home.dto';
 import { HomeService } from './home.service';
@@ -32,11 +35,13 @@ export class HomeController {
             ...(minPrice && { gte: parseInt(minPrice) }),
           }
         : undefined;
+
     const filter = {
       ...(city && { city }),
       ...(price && { price }),
       ...(propertyType && { propertyType }),
     };
+
     return this.homeService.getHomes(filter);
   }
 
@@ -45,6 +50,8 @@ export class HomeController {
     return {};
   }
 
+  @Roles(UserType.REALTOR, UserType.ADMIN)
+  @UseGuards(AuthGuard)
   @Post()
   createHome(@Body() body: CreateHomeDto, @User() user: UserInfo) {
     return this.homeService.createHome(body, user.id);
